@@ -1,0 +1,59 @@
+[package]
+name = "prims"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+age = { version = "0.11.2", features = ["armor"] }
+rpassword = "7.4.0"
+secrecy = "0.10.3"
+zeroize = { version = "1.8.2", features = ["zeroize_derive"] }
+
+ark-ff = "0.5.0"
+ark-ec = "0.5.0"
+ark-groth16 = "0.5.0"
+ark-bls12-381 = "0.5.0"
+ark-std = "0.5.0"
+ark-relations = "0.5.0"
+ark-r1cs-std = "0.5.0"
+ark-crypto-primitives = { version = "0.5.0", features = ["crh", "r1cs"] }
+ark-serialize = "0.5.0"
+rand = "0.8"
+ed25519-dalek = { version = "2.2", features = ["rand_core"] }
+rocksdb = "0.22"
+sha2 = "0.10"
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bincode = "1"
+log = "0.4"
+env_logger = "0.11"
+futures = "0.3"
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"] }
+
+libp2p = { version = "0.56", features = ["tcp", "noise", "yamux", "mdns", "gossipsub", "kad", "request-response", "tokio", "macros"] }
+jsonrpsee = { version = "0.26.0", default-features = false, features = ["server"] }
+hex = "0.4"
+governor = "0.10"
+askama = "0.15.4"
+axum = "0.8.8"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+wasmtime = "42.0.1"
+wasmtime-wasi = "42.0.1"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "storage_benchmark"
+harness = false
+
+[[bench]]
+name = "privacy_benchmark"
+harness = false
+
+[[bench]]
+name = "wasm_benchmark"
+harness = false

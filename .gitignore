@@ -1,0 +1,16 @@
+/target
+.DS_Store
+data/
+logs/
+artifacts/zk-setup/
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+journal_avancement.md.before_*
+scripts.step-5.7.bak/
+src/bin/*.bak
+
+*.bak_*
+*.before_*

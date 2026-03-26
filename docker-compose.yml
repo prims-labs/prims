@@ -1,0 +1,35 @@
+services:
+  shard1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PRIMS_LISTEN_ADDRESS: /ip4/0.0.0.0/tcp/7001
+      PRIMS_SEED_NODES: ""
+    ports:
+      - "7001:7001"
+
+  shard2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PRIMS_LISTEN_ADDRESS: /ip4/0.0.0.0/tcp/7001
+      PRIMS_SEED_NODES: /dns4/shard1/tcp/7001
+    ports:
+      - "7002:7001"
+    depends_on:
+      - shard1
+
+  shard3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      PRIMS_LISTEN_ADDRESS: /ip4/0.0.0.0/tcp/7001
+      PRIMS_SEED_NODES: /dns4/shard1/tcp/7001,/dns4/shard2/tcp/7001
+    ports:
+      - "7003:7001"
+    depends_on:
+      - shard1
+      - shard2
