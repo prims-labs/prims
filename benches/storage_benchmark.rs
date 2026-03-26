@@ -1,6 +1,8 @@
 use criterion::{BatchSize, Criterion, black_box, criterion_group, criterion_main};
 use prims::blockchain::hash::calculate_merkle_root;
-use prims::blockchain::types::{Block, BlockHeader, Transaction};
+use prims::blockchain::types::{
+    Block, BlockHeader, Transaction, TransactionType, DEFAULT_SHARD_ID,
+};
 use prims::storage::RocksDbStorage;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -15,11 +17,14 @@ fn temp_path(label: &str) -> std::path::PathBuf {
 
 fn sample_transaction(index: u64) -> Transaction {
     Transaction {
+        tx_type: TransactionType::Transfer,
         from: index.to_le_bytes().to_vec(),
         to: (index + 1).to_le_bytes().to_vec(),
         amount: index + 100,
         fee: 1,
         nonce: index,
+        source_shard: DEFAULT_SHARD_ID,
+        destination_shard: DEFAULT_SHARD_ID,
         signature: vec![index as u8; 64],
         data: Some(format!("tx-{index}").into_bytes()),
     }
@@ -44,6 +49,7 @@ fn sample_block(height: u64) -> Block {
             signature: vec![6; 64],
         },
         transactions,
+        receipts: vec![],
     }
 }
 
