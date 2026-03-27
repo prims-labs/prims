@@ -1,10 +1,11 @@
-use anyhow::Result;
+use anyhow::{Context, Result, anyhow};
 use libp2p::{
     Multiaddr, PeerId, Swarm, SwarmBuilder,
     gossipsub::{IdentTopic, MessageId},
+    identity::Keypair,
     noise, tcp, yamux,
 };
-use std::collections::HashMap;
+use std::{collections::HashMap, env, fs};
 
 use crate::{
     blockchain::{
@@ -75,9 +76,80 @@ fn consensus_vote_to_network_vote(vote: &ConsensusVote) -> NetworkVote {
     }
 }
 
+fn load_network_identity_keypair() -> Result<Keypair> {
+    if let Ok(path) = env::var("PRIMS_NETWORK_SECRET_KEY_FILE") {
+        let raw = fs::read(&path)
+            .with_context(|| format!("impossible de lire PRIMS_NETWORK_SECRET_KEY_FILE={path}"))?;
+        let secret = parse_network_secret_key_file_contents(&path, &raw)?;
+        return Keypair::ed25519_from_bytes(secret)
+            .map_err(|e| anyhow!("clé réseau libp2p invalide dans {path}: {e}"));
+    }
+
+    if let Ok(value) = env::var("PRIMS_NETWORK_SECRET_KEY_HEX") {
+        let secret = decode_hex_32("PRIMS_NETWORK_SECRET_KEY_HEX", &value)?;
+        return Keypair::ed25519_from_bytes(secret)
+            .map_err(|e| anyhow!("PRIMS_NETWORK_SECRET_KEY_HEX invalide pour libp2p: {e}"));
+    }
+
+    Ok(Keypair::generate_ed25519())
+}
+
+fn parse_network_secret_key_file_contents(path: &str, raw: &[u8]) -> Result<[u8; 32]> {
+    let text = std::str::from_utf8(raw)
+        .with_context(|| format!("contenu non UTF-8 pour PRIMS_NETWORK_SECRET_KEY_FILE={path}"))?;
+    let trimmed = text.trim();
+
+    if trimmed.starts_with('{') {
+        let json_value: serde_json::Value =
+            serde_json::from_str(trimmed).context("contenu JSON de clé réseau invalide")?;
+
+        if let Some(secret_key) = json_value
+            .get("secret_key")
+            .and_then(serde_json::Value::as_str)
+        {
+            return decode_hex_32("secret_key", secret_key);
+        }
+
+        if let Some(secret_key) = json_value
+            .get("secret_key_hex")
+            .and_then(serde_json::Value::as_str)
+        {
+            return decode_hex_32("secret_key_hex", secret_key);
+        }
+
+        return Err(anyhow!(
+            "le JSON fourni ne contient ni champ secret_key ni champ secret_key_hex"
+        ));
+    }
+
+    decode_hex_32("PRIMS_NETWORK_SECRET_KEY_FILE", trimmed)
+}
+
+fn decode_hex_32(label: &str, value: &str) -> Result<[u8; 32]> {
+    let normalized = value
+        .trim()
+        .strip_prefix("0x")
+        .or_else(|| value.trim().strip_prefix("0X"))
+        .unwrap_or(value.trim());
+
+    let decoded = hex::decode(normalized)
+        .with_context(|| format!("{label} doit être une chaîne hexadécimale valide"))?;
+
+    if decoded.len() != 32 {
+        return Err(anyhow!(
+            "{label} doit contenir exactement 32 octets après décodage hexadécimal"
+        ));
+    }
+
+    decoded
+        .try_into()
+        .map_err(|_| anyhow!("{label} doit contenir exactement 32 octets"))
+}
+
 impl PrimsNode {
     pub fn new(config: NetworkConfig) -> Result<Self> {
-        let mut swarm = SwarmBuilder::with_new_identity()
+        let local_key = load_network_identity_keypair()?;
+        let mut swarm = SwarmBuilder::with_existing_identity(local_key.clone())
             .with_tokio()
             .with_tcp(
                 tcp::Config::default(),
@@ -92,6 +164,11 @@ impl PrimsNode {
 
         let listen_address = config.listen_address.parse()?;
         swarm.listen_on(listen_address)?;
+
+        if let Some(external_address) = &config.external_address {
+            let addr: Multiaddr = external_address.parse()?;
+            swarm.add_external_address(addr.clone());
+        }
 
         for seed in &config.seed_nodes {
             let addr: Multiaddr = seed.parse()?;

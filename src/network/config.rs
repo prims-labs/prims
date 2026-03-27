@@ -7,6 +7,7 @@ use crate::network::connection::ConnectionLimits;
 pub struct NetworkConfig {
     pub listen_address: String,
     pub seed_nodes: Vec<String>,
+    pub external_address: Option<String>,
     pub connection_limits: ConnectionLimits,
 }
 
@@ -27,6 +28,11 @@ impl Default for NetworkConfig {
             })
             .unwrap_or_else(Vec::new);
 
+        let external_address = env::var("PRIMS_EXTERNAL_ADDRESS")
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+
         let connection_limits = ConnectionLimits {
             max_established_incoming: parse_env_usize("PRIMS_MAX_ESTABLISHED_INCOMING", 32),
             max_established_outgoing: parse_env_usize("PRIMS_MAX_ESTABLISHED_OUTGOING", 32),
@@ -38,6 +44,7 @@ impl Default for NetworkConfig {
         Self {
             listen_address,
             seed_nodes,
+            external_address,
             connection_limits,
         }
     }

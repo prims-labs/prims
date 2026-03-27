@@ -124,10 +124,17 @@ Dernière mise à jour : 27 mars 2026
 
 - [x] 10.2 : site web testnet simple finalisé dans `src/bin/prims-explorer.rs` avec page d accueil `Prims Testnet`, section instructions, recherche de solde, route `POST /faucet`, activation conditionnelle du faucet via `PRIMS_SECRET_KEY_FILE` ou `PRIMS_SECRET_KEY_HEX`, paramètres `PRIMS_FAUCET_AMOUNT` / `PRIMS_FAUCET_SOURCE_SHARD` / `PRIMS_FAUCET_DESTINATION_SHARD`, documentation ajoutée au `README.md`, validations réussies avec `cargo fmt`, `cargo fmt --check`, `cargo build --bin prims-explorer`, démarrage HTTP sur `127.0.0.1:7003`, vérification de la page d accueil et refus sécurisé du faucet sans clé.
 
+- [x] 10.3 : seed node public finalisé avec lecture de `PRIMS_EXTERNAL_ADDRESS` dans `src/network/config.rs`, annonce de l adresse publique via `swarm.add_external_address(...)` dans `src/network/node.rs`, prise en charge d une identité réseau persistante via `PRIMS_NETWORK_SECRET_KEY_FILE` / `PRIMS_NETWORK_SECRET_KEY_HEX`, et affichage `External address` au démarrage dans `src/main.rs` ; validations locales réussies avec `cargo fmt`, `cargo fmt --check`, `cargo build --bin prims`, réponse RPC correcte sur `http://127.0.0.1:7002` et redémarrage confirmant un `PeerId` stable grâce à une clé locale hors dépôt.
+
 ## Prochaine étape
-10.3 – Lancer un seed node public.
+10.4 – Organiser un bug bounty avec récompenses en tokens (catégories de sévérité).
 
 ## Notes importantes
+- Adresse seed node publique observée le 27 mars 2026 : `/ip4/81.65.115.118/tcp/7001/p2p/12D3KooWHAyUEv4HXap4rF7FLmdHJUv9VZ3grWspF95fAtfcw4P1`.
+- Remarque sécurité 10.3 : ne jamais commiter, afficher ni partager le contenu de `~/Documents/prims_secrets/prims_network_identity.hex` ; conserver ce fichier local hors dépôt avec permissions `600`.
+- Sauvegardes locales créées pendant l’étape 10.3 :
+  - `~/Documents/prims_sources/step-10.3/config.rs.before_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/node.rs.before_step_10_3`
 - Étape 10.2 validée : le site web testnet repose sur le binaire existant `prims-explorer`, enrichi en mini portail `Prims Testnet` avec informations du nœud, validateurs, commitments anonymes, recherche de solde, instructions de démarrage et faucet web ; sans secret configuré, le faucet reste explicitement désactivé et refuse proprement les demandes.
 - Remarque sécurité 10.2 : ne jamais commiter ni afficher une vraie clé privée faucet ; utiliser de préférence `PRIMS_SECRET_KEY_FILE` pointant vers un fichier local hors dépôt, ou à défaut `PRIMS_SECRET_KEY_HEX` uniquement pour des clés de test jetables.
 - Sauvegardes locales créées pendant l étape 10.2 :

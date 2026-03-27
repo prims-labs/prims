@@ -52,6 +52,11 @@ async fn main() -> anyhow::Result<()> {
     println!("PRIMS node started");
     println!("Local PeerId: {}", node.local_peer_id);
     println!("Listen address: {}", node.config.listen_address);
+    if let Some(external_address) = &node.config.external_address {
+        println!("External address: {}", external_address);
+    } else {
+        println!("External address: none");
+    }
     println!("Seed nodes: {:?}", node.config.seed_nodes);
     println!("Subscribed topic: prims-testnet");
     println!("Storage path: {}", storage_path);
