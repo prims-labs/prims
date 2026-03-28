@@ -1,6 +1,6 @@
 # Tests de charge Prims
 
-Ce document décrit les scripts de tests de charge disponibles pour Prims, en mode local Docker et en mode distant de type VPS.
+Ce document décrit les scripts de tests de charge disponibles pour Prims, en mode local Docker et en mode distant sur machine réelle ou nœud auto-hébergé.
 
 ## Objectif
 
@@ -35,7 +35,7 @@ Résumé attendu :
 - durée totale
 - TPS observé
 
-## Mode distant de type VPS
+## Mode distant sur machine réelle
 
 Pour viser un seed node déjà démarré ailleurs, utiliser la variable d environnement `PRIMS_REMOTE_SEED_NODE`.
 
@@ -80,7 +80,7 @@ Le script produit :
 
 ## Benchmark multi-shards en mode distant
 
-Pour viser des seed nodes déjà déployés sur des VPS, utiliser `PRIMS_BENCH_REMOTE_SEEDS`.
+Pour viser des seed nodes déjà déployés sur des machines réelles ou des nœuds auto-hébergés, utiliser `PRIMS_BENCH_REMOTE_SEEDS`.
 
 Exemple avec un seul seed :
 
@@ -129,13 +129,13 @@ Résultats typiques :
 
 - le mode distant mesure surtout les transactions publiées côté clients
 - le dispatch serveur distant n est pas compté sans collecte de logs distante
-- les essais VPS réels nécessiteront ensuite la préparation d hôtes distants, ports ouverts et supervision adaptée
+- les essais réels nécessiteront ensuite la préparation de machines distantes, ports ouverts et supervision adaptée
 
-## Préparation minimale d un nœud VPS
+## Préparation minimale d un nœud distant
 
-Le script `scripts/run_vps_node.sh` permet de lancer un nœud Prims avec les variables d environnement utiles pour un VPS.
+Le script `scripts/run_vps_node.sh` permet de lancer un nœud Prims avec les variables d environnement utiles pour une machine distante ou auto-hébergée.
 
-Exemple de lancement d un seed node sur un VPS Linux avec un binaire déjà compilé :
+Exemple de lancement d un seed node sur une machine Linux distante avec un binaire déjà compilé :
 
 ```bash
 PRIMS_LISTEN_ADDRESS="/ip4/0.0.0.0/tcp/7001" \
@@ -159,9 +159,9 @@ PRIMS_RPC_ADDRESS="127.0.0.1:7002" \
 ./prims
 ```
 
-Conseils VPS :
+Conseils machine réelle :
 - ouvrir le port TCP `7001` côté pare-feu pour le P2P
 - garder `PRIMS_RPC_ADDRESS` sur `127.0.0.1:7002` si le RPC ne doit pas être public
 - ne jamais commiter ni transférer la clé réseau privée dans le dépôt
 - utiliser un chemin de base dédié par nœud pour `PRIMS_DB_PATH`
-- vérifier que `PRIMS_EXTERNAL_ADDRESS` annonce bien l IP publique réelle du VPS
+- vérifier que `PRIMS_EXTERNAL_ADDRESS` annonce bien l IP publique réelle de la machine distante
