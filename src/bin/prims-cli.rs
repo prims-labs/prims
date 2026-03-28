@@ -3,6 +3,8 @@ use age::{decrypt as age_decrypt, encrypt_and_armor, scrypt};
 use anyhow::{Context, Result, anyhow};
 use clap::{Parser, Subcommand};
 use ed25519_dalek::SigningKey;
+use futures::StreamExt;
+use libp2p::swarm::SwarmEvent;
 use prims::{
     blockchain::{
         hash::derive_contract_address,
@@ -12,6 +14,11 @@ use prims::{
         },
     },
     crypto::{generate_keypair, sign_transaction},
+    network::{
+        config::NetworkConfig,
+        gossip::{blocks_topic, transactions_topic, votes_topic},
+        node::PrimsNode,
+    },
 };
 use reqwest::Client;
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
@@ -23,6 +30,7 @@ use std::{
     fs::{self, OpenOptions},
     io::Write,
 };
+use tokio::time::{Duration, Instant, timeout};
 use zeroize::Zeroize;
 
 const DEFAULT_RPC_URL: &str = "http://127.0.0.1:7002";
@@ -72,6 +80,18 @@ enum Commands {
         params: String,
         #[arg(long, default_value_t = DEFAULT_CALL_CONTRACT_GAS_LIMIT)]
         gas_limit: u64,
+    },
+    Flood {
+        #[arg(long, default_value_t = 1000)]
+        count: u64,
+        #[arg(long, default_value_t = 1)]
+        start_nonce: u64,
+        #[arg(long, default_value_t = 42)]
+        amount: u64,
+        #[arg(long, default_value = "/ip4/127.0.0.1/tcp/0")]
+        listen_address: String,
+        #[arg(long, value_delimiter = ',')]
+        seed_nodes: Vec<String>,
     },
 }
 
@@ -178,7 +198,153 @@ async fn main() -> Result<()> {
             params,
             gas_limit,
         } => call_contract_command(&http, &rpc_url, &address, &method, &params, gas_limit).await,
+        Commands::Flood {
+            count,
+            start_nonce,
+            amount,
+            listen_address,
+            seed_nodes,
+        } => flood(count, start_nonce, amount, listen_address, seed_nodes).await,
     }
+}
+
+async fn flood(
+    count: u64,
+    start_nonce: u64,
+    amount: u64,
+    listen_address: String,
+    seed_nodes: Vec<String>,
+) -> Result<()> {
+    if count == 0 {
+        return Err(anyhow!("count doit être supérieur à 0"));
+    }
+
+    let mut config = NetworkConfig::default();
+    config.listen_address = listen_address;
+
+    if !seed_nodes.is_empty() {
+        config.seed_nodes = seed_nodes;
+    }
+
+    if config.seed_nodes.is_empty() {
+        return Err(anyhow!(
+            "au moins un seed node est requis (--seed-nodes ou PRIMS_SEED_NODES)"
+        ));
+    }
+
+    let mut node = PrimsNode::new(config)?;
+    let gossipsub = &mut node.swarm.behaviour_mut().gossipsub;
+    let _ = gossipsub.unsubscribe(&blocks_topic());
+    let _ = gossipsub.unsubscribe(&transactions_topic());
+    let _ = gossipsub.unsubscribe(&votes_topic());
+
+    println!("PRIMS CLI flood démarré");
+    println!("Local PeerId: {}", node.local_peer_id);
+    println!("Listen address: {}", node.config.listen_address);
+    println!("Seed nodes: {:?}", node.config.seed_nodes);
+
+    let deadline = Instant::now() + Duration::from_secs(10);
+    let mut connected = false;
+
+    while Instant::now() < deadline {
+        match timeout(Duration::from_millis(500), node.swarm.select_next_some()).await {
+            Ok(SwarmEvent::NewListenAddr { address, .. }) => {
+                println!("CLI listening on {}", address);
+            }
+            Ok(SwarmEvent::ConnectionEstablished { peer_id, .. }) => {
+                println!("Connection established with {}", peer_id);
+                connected = true;
+                break;
+            }
+            Ok(_) => {}
+            Err(_) => {}
+        }
+    }
+
+    if !connected {
+        return Err(anyhow!(
+            "aucune connexion établie avec les seed nodes sous 10 secondes"
+        ));
+    }
+
+    let subscription_deadline = Instant::now() + Duration::from_secs(3);
+    while Instant::now() < subscription_deadline {
+        match timeout(Duration::from_millis(250), node.swarm.select_next_some()).await {
+            Ok(SwarmEvent::Behaviour(_)) => {}
+            Ok(SwarmEvent::NewListenAddr { address, .. }) => {
+                println!("CLI listening on {}", address);
+            }
+            Ok(SwarmEvent::ConnectionEstablished { peer_id, .. }) => {
+                println!("Connection established with {}", peer_id);
+            }
+            Ok(_) => {}
+            Err(_) => {}
+        }
+    }
+
+    let sender = generate_keypair();
+
+    for offset in 0..count {
+        let nonce = start_nonce + offset;
+        let recipient = generate_keypair();
+
+        let mut tx = Transaction {
+            tx_type: TransactionType::Transfer,
+            from: sender.public_key.to_vec(),
+            to: recipient.public_key.to_vec(),
+            amount,
+            fee: FIXED_TRANSACTION_FEE,
+            nonce,
+            source_shard: 0,
+            destination_shard: 0,
+            signature: Vec::new(),
+            data: Some(format!("load-test-{nonce}").into_bytes()),
+        };
+
+        tx.signature = sign_transaction(&tx, &sender.secret_key)?;
+
+        let mut attempts = 0u32;
+        loop {
+            match node.publish_transaction(&tx) {
+                Ok(_) => break,
+                Err(error)
+                    if error.to_string().contains("NoPeersSubscribedToTopic") && attempts < 20 =>
+                {
+                    attempts += 1;
+                    println!(
+                        "Transaction nonce {} en attente d'abonnés sur le topic, nouvelle tentative {}/20...",
+                        nonce, attempts
+                    );
+                    match timeout(Duration::from_millis(250), node.swarm.select_next_some()).await {
+                        Ok(_) => {}
+                        Err(_) => {}
+                    }
+                }
+                Err(error) if error.to_string().contains("AllQueuesFull") && attempts < 200 => {
+                    attempts += 1;
+                    match timeout(Duration::from_millis(5), node.swarm.select_next_some()).await {
+                        Ok(_) => {}
+                        Err(_) => {}
+                    }
+                }
+                Err(error) => return Err(error),
+            }
+        }
+
+        println!("Published transaction nonce {}", nonce);
+    }
+
+    println!("Total published transactions: {}", count);
+
+    let flush_deadline = Instant::now() + Duration::from_secs(2);
+    while Instant::now() < flush_deadline {
+        match timeout(Duration::from_millis(100), node.swarm.select_next_some()).await {
+            Ok(_) => {}
+            Err(_) => {}
+        }
+    }
+
+    Ok(())
 }
 
 fn generate_key_command(encrypted_file: Option<&str>) -> Result<()> {

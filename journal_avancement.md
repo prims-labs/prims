@@ -132,6 +132,7 @@ Dernière mise à jour : 28 mars 2026
 10.5 – Tests de charge : déployer des nœuds sur des VPS, lancer des scripts de transactions massives (milliers de TPS).
 
 ## Notes importantes
+- Étape 10.5 démarrée localement : restauration de la sous-commande `flood` dans `src/bin/prims-cli.rs`, adaptation de `scripts/test_transaction_load.sh` pour un mode local ou distant via `PRIMS_REMOTE_SEED_NODE` / `PRIMS_LOAD_SKIP_BUILD`, adaptation de `scripts/benchmark_shards_tps.sh` pour un mode Docker ou distant via `PRIMS_BENCH_REMOTE_SEEDS` / `PRIMS_BENCH_SKIP_BUILD`, et ajout de la documentation `docs/load_testing.md` référencée depuis `README.md` ; validations locales réussies avec `cargo fmt --all --check`, `cargo build --bin prims --bin prims-cli`, `bash -n scripts/test_transaction_load.sh scripts/benchmark_shards_tps.sh`, smoke test local `bash scripts/test_transaction_load.sh 7001 1 5 1`, benchmark Docker minimal `PRIMS_BENCH_SKIP_BUILD=1 bash scripts/benchmark_shards_tps.sh 1 1 5 1`, et benchmark distant simulé via `PRIMS_BENCH_REMOTE_SEEDS` sur un seed node local dédié ; étape non clôturée Git/GitHub, poursuite requise pour les essais VPS réels.
 - Sauvegardes locales créées pendant l’étape 10.4 :
   - `~/Documents/prims_sources/step-10.4/README.md.before_step_10_4`
 - Étape 10.3 clôturée Git/GitHub : commit `f4dd47c` (`feat(network): finalize public seed node for step 10.3`) créé puis poussé avec succès sur `origin/main`, vérification confirmée avec `HEAD` local = `origin/main`, et sauvegardes finales créées dans `~/Documents/prims_sources/step-10.3/`.
