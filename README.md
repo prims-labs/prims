@@ -73,6 +73,7 @@ cargo run --bin prims
 
 - API JSON-RPC : `docs/api_rpc.md`
 - Setup de confidentialite : `docs/privacy_trusted_setup.md`
+- Bug bounty testnet : `docs/bug_bounty.md`
 
 
 ## Site web testnet

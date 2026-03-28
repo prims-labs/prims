@@ -1,6 +1,6 @@
 # Journal d'avancement de Prims
 
-Dernière mise à jour : 27 mars 2026
+Dernière mise à jour : 28 mars 2026
 
 ## Étapes terminées
 - [x] 0.1 : Installation de Rust, Git, VS Code (vérifié)
@@ -127,14 +127,23 @@ Dernière mise à jour : 27 mars 2026
 - [x] 10.3 : seed node public finalisé avec lecture de `PRIMS_EXTERNAL_ADDRESS` dans `src/network/config.rs`, annonce de l adresse publique via `swarm.add_external_address(...)` dans `src/network/node.rs`, prise en charge d une identité réseau persistante via `PRIMS_NETWORK_SECRET_KEY_FILE` / `PRIMS_NETWORK_SECRET_KEY_HEX`, et affichage `External address` au démarrage dans `src/main.rs` ; validations locales réussies avec `cargo fmt`, `cargo fmt --check`, `cargo build --bin prims`, réponse RPC correcte sur `http://127.0.0.1:7002` et redémarrage confirmant un `PeerId` stable grâce à une clé locale hors dépôt.
 
 ## Prochaine étape
-10.4 – Organiser un bug bounty avec récompenses en tokens (catégories de sévérité).
+10.4 – Finaliser le programme de bug bounty : revue Git, vérification finale des fichiers, mise à jour du journal, commit, push GitHub sur `main`, vérification du push, puis sauvegarde locale.
 
 ## Notes importantes
+- Sauvegardes locales créées pendant l’étape 10.4 :
+  - `~/Documents/prims_sources/step-10.4/README.md.before_step_10_4`
+- Étape 10.3 clôturée Git/GitHub : commit `f4dd47c` (`feat(network): finalize public seed node for step 10.3`) créé puis poussé avec succès sur `origin/main`, vérification confirmée avec `HEAD` local = `origin/main`, et sauvegardes finales créées dans `~/Documents/prims_sources/step-10.3/`.
+- Étape 10.4 démarrée localement mais pas encore clôturée Git/GitHub : création de `docs/bug_bounty.md` avec objectif, canal de signalement, périmètre, hors périmètre, règles de test, catégories de sévérité (`Critique`, `Haute`, `Moyenne`, `Faible`) et récompenses proposées en `PRIMS`, plus ajout du lien `docs/bug_bounty.md` dans la section `Documentation` de `README.md` ; revue locale du contenu effectuée, sans secret ni clé sensible.
 - Adresse seed node publique observée le 27 mars 2026 : `/ip4/81.65.115.118/tcp/7001/p2p/12D3KooWHAyUEv4HXap4rF7FLmdHJUv9VZ3grWspF95fAtfcw4P1`.
 - Remarque sécurité 10.3 : ne jamais commiter, afficher ni partager le contenu de `~/Documents/prims_secrets/prims_network_identity.hex` ; conserver ce fichier local hors dépôt avec permissions `600`.
 - Sauvegardes locales créées pendant l’étape 10.3 :
   - `~/Documents/prims_sources/step-10.3/config.rs.before_step_10_3`
   - `~/Documents/prims_sources/step-10.3/node.rs.before_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/journal_avancement.md.after_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/main.rs.after_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/config.rs.after_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/node.rs.after_step_10_3`
+  - `~/Documents/prims_sources/step-10.3/git_commit_step_10_3.txt`
 - Étape 10.2 validée : le site web testnet repose sur le binaire existant `prims-explorer`, enrichi en mini portail `Prims Testnet` avec informations du nœud, validateurs, commitments anonymes, recherche de solde, instructions de démarrage et faucet web ; sans secret configuré, le faucet reste explicitement désactivé et refuse proprement les demandes.
 - Remarque sécurité 10.2 : ne jamais commiter ni afficher une vraie clé privée faucet ; utiliser de préférence `PRIMS_SECRET_KEY_FILE` pointant vers un fichier local hors dépôt, ou à défaut `PRIMS_SECRET_KEY_HEX` uniquement pour des clés de test jetables.
 - Sauvegardes locales créées pendant l étape 10.2 :
