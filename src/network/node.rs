@@ -336,4 +336,37 @@ mod tests {
         assert_eq!(network_vote.approve, vote.approve);
         assert_eq!(network_vote.signature, vote.signature);
     }
+
+    #[test]
+    fn decode_hex_32_accepts_valid_32_byte_hex() {
+        let value = "11".repeat(32);
+        let decoded = decode_hex_32("TEST_KEY", &value).expect("valid 32-byte hex should decode");
+
+        assert_eq!(decoded, [0x11; 32]);
+    }
+
+    #[test]
+    fn decode_hex_32_rejects_invalid_length() {
+        let value = "11".repeat(31);
+        let error = decode_hex_32("TEST_KEY", &value).expect_err("31-byte hex should be rejected");
+
+        assert!(
+            error
+                .to_string()
+                .contains("TEST_KEY doit contenir exactement 32 octets"),
+            "unexpected error: {error}"
+        );
+    }
+
+    #[test]
+    fn decode_hex_32_rejects_non_hex_input() {
+        let error = decode_hex_32("TEST_KEY", "zz").expect_err("non-hex input should be rejected");
+
+        assert!(
+            error
+                .to_string()
+                .contains("TEST_KEY doit être une chaîne hexadécimale valide"),
+            "unexpected error: {error}"
+        );
+    }
 }

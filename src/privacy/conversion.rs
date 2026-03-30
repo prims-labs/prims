@@ -366,6 +366,48 @@ mod tests {
     }
 
     #[test]
+    fn anon_to_public_rejects_invalid_ownership_proof() {
+        let spending_private_key = sample_spending_private_key(61);
+        let recipient_public_key = derive_note_recipient_public_key(&spending_private_key);
+        let note =
+            Note::new(20, recipient_public_key, sample_blinding(62)).expect("note must be valid");
+        let filler =
+            Note::new(8, [71u8; 32], sample_blinding(72)).expect("filler note must be valid");
+        let tree = NoteMerkleTree::from_notes(&vec![note.clone(), filler.clone()]);
+        let mut merkle_proof = tree.generate_proof(0).expect("proof must exist");
+        merkle_proof.leaf = filler.commitment;
+
+        let account = Account {
+            balance: 3,
+            nonce: 2,
+            code_hash: None,
+            anonymous_state: AnonymousAccountState {
+                viewing_hint: Some(
+                    ViewableNote::compute_viewing_hint(&sample_viewing_key(63))
+                        .expect("hint must exist")
+                        .to_vec(),
+                ),
+                note_commitments: vec![note.commitment.to_vec()],
+            },
+        };
+
+        assert_eq!(
+            convert_anon_to_public(
+                &account,
+                &AnonToPublicRequest {
+                    amount: 20,
+                    spending_private_key,
+                    blinding: sample_blinding(62),
+                    merkle_proof,
+                    shard_id: None,
+                },
+                &[note.commitment, filler.commitment],
+            ),
+            Err(ConversionError::InvalidOwnershipProof)
+        );
+    }
+
+    #[test]
     fn anon_to_public_rejects_invalid_merkle_proof() {
         let spending_private_key = sample_spending_private_key(51);
         let recipient_public_key = derive_note_recipient_public_key(&spending_private_key);

@@ -1264,6 +1264,26 @@ mod tests {
     }
 
     #[test]
+    fn verify_vote_rejects_invalid_voter_key_length() {
+        let pair = generate_keypair();
+        let mut vote =
+            create_signed_vote(9, &[6; 32], true, &pair.secret_key).expect("create signed vote");
+        vote.voter.pop();
+
+        assert_eq!(verify_vote(&vote), Err(VoteError::InvalidVoterKeyLength));
+    }
+
+    #[test]
+    fn verify_vote_rejects_invalid_signature_length() {
+        let pair = generate_keypair();
+        let mut vote =
+            create_signed_vote(9, &[6; 32], true, &pair.secret_key).expect("create signed vote");
+        vote.signature.pop();
+
+        assert_eq!(verify_vote(&vote), Err(VoteError::InvalidSignatureLength));
+    }
+
+    #[test]
     fn vote_collector_rejects_invalid_signature() {
         let pair = generate_keypair();
         let validators = vec![validator_from_pair(&pair, 25)];

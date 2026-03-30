@@ -1106,4 +1106,69 @@ mod tests {
             .expect("contract should exist");
         assert_eq!(stored_contract.storage_root, initial_storage_root);
     }
+
+    #[test]
+    fn execute_contract_call_rolls_back_storage_on_negative_memory_offset() {
+        let path = temp_path("execute-contract-call-negative-memory");
+        let storage =
+            Arc::new(RocksDbStorage::open(&path).expect("rocksdb should open successfully"));
+        storage
+            .update_account(b"contract-1", &sample_contract_account(0, 0))
+            .expect("save contract account");
+
+        let wat = r#"
+            (module
+              (import "prims" "set_storage" (func $set_storage (param i32 i32 i32 i32)))
+              (memory (export "memory") 1)
+              (data (i32.const 0) "counter")
+              (data (i32.const 16) "1")
+              (func (export "increment_then_negative_offset")
+                i32.const 0
+                i32.const 7
+                i32.const 16
+                i32.const 1
+                call $set_storage
+                i32.const -1
+                i32.const 7
+                i32.const 16
+                i32.const 1
+                call $set_storage))
+        "#;
+
+        let mut contract = sample_contract();
+        contract.code_wasm = wat.as_bytes().to_vec();
+        let initial_storage_root = contract.storage_root.clone();
+        storage
+            .update_contract(b"contract-1", &contract)
+            .expect("save contract metadata");
+
+        let error = WasmVM::execute_contract_call(
+            Arc::clone(&storage),
+            sample_context(),
+            "increment_then_negative_offset",
+            br#"{"delta":1}"#,
+            50_000,
+        )
+        .expect_err("negative memory offset should abort contract execution");
+
+        assert!(
+            error.chain().any(|cause| cause
+                .to_string()
+                .contains("negative memory offsets are not allowed")),
+            "unexpected error chain: {error:#}"
+        );
+
+        assert_eq!(
+            storage
+                .get_contract_storage(b"contract-1", b"counter")
+                .expect("get contract storage after invalid negative offset"),
+            None
+        );
+
+        let stored_contract = storage
+            .get_contract(b"contract-1")
+            .expect("get contract")
+            .expect("contract should exist");
+        assert_eq!(stored_contract.storage_root, initial_storage_root);
+    }
 }

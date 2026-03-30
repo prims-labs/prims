@@ -1117,6 +1117,46 @@ mod tests {
     }
 
     #[test]
+    fn prepare_rejects_invalid_source_shard() {
+        let config = ShardingConfig::new(4).expect("4 shards must be valid");
+        let validators = vec![validator_with_id(1, 10), validator_with_id(2, 20)];
+        let beacon_chain = BeaconChain::new(config, validators);
+        let transaction = sample_cross_shard_transaction(4, 1, 7);
+
+        let error = beacon_chain
+            .prepare_cross_shard_transaction(&transaction)
+            .expect_err("invalid source shard must be rejected");
+
+        assert_eq!(
+            error,
+            CrossShardTransactionError::BeaconChain(BeaconChainError::InvalidShardId {
+                shard_id: 4,
+                shard_count: 4,
+            })
+        );
+    }
+
+    #[test]
+    fn prepare_rejects_invalid_destination_shard() {
+        let config = ShardingConfig::new(4).expect("4 shards must be valid");
+        let validators = vec![validator_with_id(1, 10), validator_with_id(2, 20)];
+        let beacon_chain = BeaconChain::new(config, validators);
+        let transaction = sample_cross_shard_transaction(1, 4, 7);
+
+        let error = beacon_chain
+            .prepare_cross_shard_transaction(&transaction)
+            .expect_err("invalid destination shard must be rejected");
+
+        assert_eq!(
+            error,
+            CrossShardTransactionError::BeaconChain(BeaconChainError::InvalidShardId {
+                shard_id: 4,
+                shard_count: 4,
+            })
+        );
+    }
+
+    #[test]
     fn cross_shard_transaction_prepare_validate_commit_generates_receipts() {
         let config = ShardingConfig::new(4).expect("4 shards must be valid");
         let validators = vec![

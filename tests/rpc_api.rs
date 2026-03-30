@@ -5,6 +5,7 @@ use prims::{
         Transaction, TransactionType,
     },
     consensus::Mempool,
+    crypto::{generate_keypair, sign_transaction},
     storage::RocksDbStorage,
 };
 use serde_json::json;
@@ -29,8 +30,10 @@ fn send_transaction_accepts_valid_bincode_hex_transaction() {
     let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
     let mempool = Arc::new(Mempool::new());
 
-    let sender = vec![0x11; 32];
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
     let recipient = vec![0x22; 32];
+    let sender_secret_key = sender_keypair.secret_key;
 
     let account = Account {
         balance: 1_000,
@@ -43,7 +46,7 @@ fn send_transaction_accepts_valid_bincode_hex_transaction() {
         .update_account(&sender, &account)
         .expect("store sender account");
 
-    let tx = Transaction {
+    let mut tx = Transaction {
         tx_type: TransactionType::Transfer,
         from: sender,
         to: recipient,
@@ -52,9 +55,10 @@ fn send_transaction_accepts_valid_bincode_hex_transaction() {
         nonce: 1,
         source_shard: 0,
         destination_shard: 0,
-        signature: vec![0x33; 64],
+        signature: Vec::new(),
         data: Some(b"rpc-success".to_vec()),
     };
+    tx.signature = sign_transaction(&tx, &sender_secret_key).expect("sign tx");
 
     let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
 
@@ -102,8 +106,10 @@ fn send_transaction_accepts_valid_call_contract_transaction() {
     let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
     let mempool = Arc::new(Mempool::new());
 
-    let sender = vec![0x77; 32];
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
     let contract_address = vec![0x88; 32];
+    let sender_secret_key = sender_keypair.secret_key;
 
     let account = Account {
         balance: 1_000,
@@ -161,7 +167,7 @@ fn send_transaction_accepts_valid_call_contract_transaction() {
         gas_limit: 50_000,
     };
 
-    let tx = Transaction {
+    let mut tx = Transaction {
         tx_type: TransactionType::CallContract,
         from: sender,
         to: contract_address.clone(),
@@ -170,9 +176,10 @@ fn send_transaction_accepts_valid_call_contract_transaction() {
         nonce: 1,
         source_shard: 0,
         destination_shard: 0,
-        signature: vec![0x44; 64],
+        signature: Vec::new(),
         data: Some(bincode::serialize(&call_payload).expect("serialize call contract payload")),
     };
+    tx.signature = sign_transaction(&tx, &sender_secret_key).expect("sign tx");
 
     let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
 
@@ -226,8 +233,10 @@ fn send_transaction_rejects_call_contract_when_execution_traps_and_rolls_back_st
     let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
     let mempool = Arc::new(Mempool::new());
 
-    let sender = vec![0x66; 32];
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
     let contract_address = vec![0x67; 32];
+    let sender_secret_key = sender_keypair.secret_key;
 
     let account = Account {
         balance: 1_000,
@@ -279,7 +288,7 @@ fn send_transaction_rejects_call_contract_when_execution_traps_and_rolls_back_st
         gas_limit: 50_000,
     };
 
-    let tx = Transaction {
+    let mut tx = Transaction {
         tx_type: TransactionType::CallContract,
         from: sender,
         to: contract_address.clone(),
@@ -288,9 +297,10 @@ fn send_transaction_rejects_call_contract_when_execution_traps_and_rolls_back_st
         nonce: 1,
         source_shard: 0,
         destination_shard: 0,
-        signature: vec![0x68; 64],
+        signature: Vec::new(),
         data: Some(bincode::serialize(&call_payload).expect("serialize call contract payload")),
     };
+    tx.signature = sign_transaction(&tx, &sender_secret_key).expect("sign tx");
 
     let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
 
@@ -344,8 +354,10 @@ fn send_transaction_rejects_call_contract_with_zero_gas_limit() {
     let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
     let mempool = Arc::new(Mempool::new());
 
-    let sender = vec![0x99; 32];
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
     let contract_address = vec![0xAA; 32];
+    let sender_secret_key = sender_keypair.secret_key;
 
     let account = Account {
         balance: 1_000,
@@ -364,7 +376,7 @@ fn send_transaction_rejects_call_contract_with_zero_gas_limit() {
         gas_limit: 0,
     };
 
-    let tx = Transaction {
+    let mut tx = Transaction {
         tx_type: TransactionType::CallContract,
         from: sender,
         to: contract_address,
@@ -373,9 +385,10 @@ fn send_transaction_rejects_call_contract_with_zero_gas_limit() {
         nonce: 1,
         source_shard: 0,
         destination_shard: 0,
-        signature: vec![0x55; 64],
+        signature: Vec::new(),
         data: Some(bincode::serialize(&call_payload).expect("serialize call contract payload")),
     };
+    tx.signature = sign_transaction(&tx, &sender_secret_key).expect("sign tx");
 
     let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
 
@@ -527,5 +540,171 @@ fn get_validators_is_rate_limited_after_quota_is_exhausted() {
             second_payload["error"]["message"],
             json!("rate limit exceeded")
         );
+    });
+}
+
+#[test]
+fn send_transaction_is_rate_limited_after_quota_is_exhausted() {
+    let path = temp_db_path("send-transaction-rate-limit");
+    let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
+    let mempool = Arc::new(Mempool::new());
+
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
+    let recipient = vec![0x22; 32];
+    let sender_secret_key = sender_keypair.secret_key;
+
+    let account = Account {
+        balance: 1_000,
+        nonce: 0,
+        code_hash: None,
+        anonymous_state: AnonymousAccountState::default(),
+    };
+
+    storage
+        .update_account(&sender, &account)
+        .expect("store sender account");
+
+    let mut tx = Transaction {
+        tx_type: TransactionType::Transfer,
+        from: sender,
+        to: recipient,
+        amount: 1,
+        fee: FIXED_TRANSACTION_FEE,
+        nonce: 1,
+        source_shard: 0,
+        destination_shard: 0,
+        signature: Vec::new(),
+        data: Some(b"rate-limit".to_vec()),
+    };
+    tx.signature = sign_transaction(&tx, &sender_secret_key).expect("sign tx");
+
+    let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
+
+    let module = build_rpc_module(RpcState::with_rate_limit(
+        Arc::clone(&storage),
+        Arc::clone(&mempool),
+        NonZeroU32::new(1).expect("non-zero rate limit"),
+    ))
+    .expect("build rpc module");
+
+    let first_request =
+        r#"{"jsonrpc":"2.0","id":1,"method":"send_transaction","params":{"hex_tx":"__HEX_TX__"}}"#
+            .replace("__HEX_TX__", &tx_hex);
+
+    let second_request =
+        r#"{"jsonrpc":"2.0","id":2,"method":"send_transaction","params":{"hex_tx":"__HEX_TX__"}}"#
+            .replace("__HEX_TX__", &tx_hex);
+
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .expect("build test runtime");
+
+    runtime.block_on(async {
+        let (first_response, _receiver) = module
+            .raw_json_request(&first_request, first_request.len())
+            .await
+            .expect("first rpc response");
+
+        let first_payload: serde_json::Value =
+            serde_json::from_str(first_response.get()).expect("decode first rpc json payload");
+
+        assert_eq!(first_payload["jsonrpc"], json!("2.0"));
+        assert_eq!(first_payload["id"], json!(1));
+        assert_eq!(first_payload["result"]["accepted"], json!(true));
+        assert_eq!(mempool.len_async().await, 1);
+
+        let (second_response, _receiver) = module
+            .raw_json_request(&second_request, second_request.len())
+            .await
+            .expect("second rpc response");
+
+        let second_payload: serde_json::Value =
+            serde_json::from_str(second_response.get()).expect("decode second rpc json payload");
+
+        assert_eq!(second_payload["jsonrpc"], json!("2.0"));
+        assert_eq!(second_payload["id"], json!(2));
+        assert_eq!(second_payload["error"]["code"], json!(-32029));
+        assert_eq!(
+            second_payload["error"]["message"],
+            json!("rate limit exceeded")
+        );
+        assert_eq!(mempool.len_async().await, 1);
+    });
+}
+
+#[test]
+fn send_transaction_rejects_invalid_signature() {
+    let path = temp_db_path("send-transaction-invalid-signature");
+    let storage = Arc::new(RocksDbStorage::open(&path).expect("open rocksdb"));
+    let mempool = Arc::new(Mempool::new());
+
+    let sender_keypair = generate_keypair();
+    let sender = sender_keypair.public_key.to_vec();
+    let recipient = vec![0x23; 32];
+
+    let account = Account {
+        balance: 1_000,
+        nonce: 0,
+        code_hash: None,
+        anonymous_state: AnonymousAccountState::default(),
+    };
+
+    storage
+        .update_account(&sender, &account)
+        .expect("store sender account");
+
+    let mut tx = Transaction {
+        tx_type: TransactionType::Transfer,
+        from: sender,
+        to: recipient,
+        amount: 10,
+        fee: FIXED_TRANSACTION_FEE,
+        nonce: 1,
+        source_shard: 0,
+        destination_shard: 0,
+        signature: Vec::new(),
+        data: Some(b"invalid-signature".to_vec()),
+    };
+
+    tx.signature = vec![0xAA; 64];
+
+    let tx_hex = hex::encode(bincode::serialize(&tx).expect("serialize tx"));
+
+    let module = build_rpc_module(RpcState::new(Arc::clone(&storage), Arc::clone(&mempool)))
+        .expect("build rpc module");
+
+    let request =
+        r#"{"jsonrpc":"2.0","id":1,"method":"send_transaction","params":{"hex_tx":"__HEX_TX__"}}"#
+            .replace("__HEX_TX__", &tx_hex);
+
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .expect("build test runtime");
+
+    runtime.block_on(async {
+        let (response, _receiver) = module
+            .raw_json_request(&request, request.len())
+            .await
+            .expect("rpc response");
+
+        let payload: serde_json::Value =
+            serde_json::from_str(response.get()).expect("decode rpc json payload");
+
+        assert_eq!(payload["jsonrpc"], json!("2.0"));
+        assert_eq!(payload["id"], json!(1));
+        assert_eq!(payload["error"]["code"], json!(-32010));
+
+        let message = payload["error"]["message"]
+            .as_str()
+            .expect("rpc error message");
+        assert!(
+            message.contains("transaction rejected: invalid signature"),
+            "unexpected rpc error message: {message}"
+        );
+
+        assert_eq!(mempool.len_async().await, 0);
     });
 }

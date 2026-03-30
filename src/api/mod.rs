@@ -10,6 +10,7 @@ use crate::{
         },
     },
     consensus::Mempool,
+    crypto::verify_transaction,
     storage::{RocksDbStorage, StorageBackend, keys},
     vm::{WasmExecutionContext, WasmVM},
 };
@@ -308,6 +309,19 @@ async fn send_transaction(ctx: &RpcState, hex_tx: &str) -> RpcResult<RpcSendTran
 
     validate_transaction_size(&transaction)
         .map_err(|err| validation_error(format!("transaction rejected: {err}")))?;
+
+    let sender_public_key: [u8; 32] = transaction.from.as_slice().try_into().map_err(|_| {
+        validation_error("transaction rejected: sender public key must be 32 bytes")
+    })?;
+
+    let signature_is_valid =
+        verify_transaction(&transaction, &sender_public_key).map_err(|err| {
+            validation_error(format!("transaction rejected: invalid signature: {err}"))
+        })?;
+
+    if !signature_is_valid {
+        return Err(validation_error("transaction rejected: invalid signature"));
+    }
 
     let sender_account = ctx
         .storage()

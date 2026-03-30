@@ -74,6 +74,11 @@ cargo run --bin prims
 - API JSON-RPC : `docs/api_rpc.md`
 - Setup de confidentialite : `docs/privacy_trusted_setup.md`
 - Bug bounty testnet : `docs/bug_bounty.md`
+- Audit de securite : `docs/security_audit.md`
+- Appel a audit : `docs/security_audit_call.md`
+- Template de contact audit : `docs/security_audit_contact_template.md`
+- Suivi des constats d audit : `docs/security_audit_findings.md`
+- Plan d audit interne : `docs/security_internal_audit_plan.md`
 - Tests de charge : `docs/load_testing.md`
 
 
