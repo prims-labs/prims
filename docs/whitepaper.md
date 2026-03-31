@@ -257,9 +257,28 @@ Au-dela des validations par module, Prims a deja passe une phase explicite de du
 ## 8. Limites actuelles et points encore en cours
 
 ### 8.1 Limites du prototype actuel
+
+Malgre l avancement technique du projet, Prims reste au 31 mars 2026 un prototype avance en preparation testnet/mainnet, pas un reseau mainnet ouvert et eprouve a grande echelle. Une partie importante des validations a ete obtenue en local, sur machine unique, sur cluster local ou dans des simulations Docker. Ces resultats sont utiles et solides pour un prototype, mais ils ne remplacent pas encore une validation en environnement public reel.
+
+Certaines validations restent aussi volontairement bornees. Par exemple, les benchmarks Wasm ont ete realises sur des contrats simples, la validation fonctionnelle de contrat de type jeton reste minimale, et la couche de confidentialite repose encore sur un setup simplifie et sur des hypotheses de prototype. Le projet a donc deja une base serieuse, mais pas encore le niveau de couverture qu exigerait un lancement mainnet complet.
+
 ### 8.2 Écarts entre vision long terme et état actuel
+
+La vision de Prims vise une blockchain tres performante, modulaire, orientee parallellisme, confidentialite optionnelle, smart contracts Wasm, gouvernance progressive et, dans la presentation du projet, des ambitions larges comme l interoperabilite native. L etat actuel rejoint deja une partie importante de cette vision sur le plan architectural, mais pas encore sur le plan d un deploiement public complet ni sur tous les axes fonctionnels de long terme.
+
+En particulier, il existe encore un ecart entre des validations locales prometteuses et une preuve de comportement robuste sur un reseau public ouvert avec validateurs, trafic, incidents et contraintes reelles d exploitation. De meme, certaines ambitions de long terme, comme la gouvernance on-chain mature ou d autres extensions ecosysteme, restent encore des objectifs de roadmap et non des fonctions deja finalisees dans le prototype actuel.
+
 ### 8.3 Hypothèses à confirmer
+
+Plusieurs hypotheses restent a confirmer dans les prochaines etapes. Il faut encore verifier le comportement du systeme sur des conditions plus proches d un veritable testnet public, completer la documentation et les tutoriels, confirmer les derniers parametres techniques et operationnels utiles avant le mainnet, puis finaliser la sequence d audits et de tests de penetration prevue par la roadmap.
+
+D autres hypotheses techniques restent aussi ouvertes a un niveau plus fin : comportement sur des charges Wasm plus complexes, evolution du systeme avec davantage de validateurs et de topologies reseau, couverture supplementaire de certains cas limites de confidentialite, et finalisation du cadre de lancement mainnet avec parametres genesis et gouvernance progressive. Ces sujets ne remettent pas en cause le travail deja valide, mais ils montrent clairement que la consolidation n est pas terminee.
+
 ### 8.4 Points de vigilance sécurité
+
+Plusieurs points de vigilance securite doivent rester actifs dans la suite du projet. La surface RPC doit continuer a etre revue avec prudence, la VM Wasm doit continuer a etre testee contre des contrats malveillants plus varies, et les mecanismes de sharding, de receipts et de finalite globale doivent rester fortement surveilles a mesure que les scenarios montent en complexite.
+
+La confidentialite optionnelle demande egalement une vigilance particuliere. Le prototype a deja valide des briques importantes, mais certains choix restent ceux d un systeme en cours de maturation, par exemple l absence actuelle d un registre explicite de nullifiers dans l etat present du prototype. Enfin, sur le plan operationnel, la gestion des secrets, cles, seed nodes, fichiers chiffrés et procedures de deploiement doit rester stricte jusqu aux dernieres etapes avant mainnet.
 
 ---
 
