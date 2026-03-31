@@ -153,15 +153,64 @@ Au-dela de la phase 10, la phase 11 reste encore a executer : gel du code cible 
 ## 6. Architecture technique actuelle
 
 ### 6.1 Couche réseau P2P
+
+La couche reseau actuelle de Prims repose sur Rust et libp2p. Le prototype integre la decouverte de pairs, la diffusion de messages par gossip, la gestion de seed nodes, ainsi que des mecanismes de base de robustesse reseau comme les limites de connexion, la reconnexion et le rejet de traffic invalide. Cette couche constitue la base de circulation des transactions, blocs et votes dans le prototype.
+
+Dans l etat actuel, cette couche reseau est fonctionnelle et testee localement, y compris sur cluster local et sur scenarios de resistance simples au spam de connexions. Elle reste cependant une couche de prototype avancee, pas encore une infrastructure reseau mainnet durcie a grande echelle.
+
 ### 6.2 Structures blockchain et stockage
+
+Le coeur blockchain de Prims s appuie sur des structures de donnees explicites pour les transactions, blocs, comptes, validateurs, contrats et etats associes. Le stockage persistant repose sur RocksDB, avec un schema de cles dedie pour les blocs, transactions, comptes, stakes, contrats, storage contrat et elements lies a la confidentialite.
+
+L architecture actuelle permet deja la persistance, la relecture apres redemarrage, l indexation de base, ainsi qu un renforcement d integrite sur certaines donnees critiques via checksum. Cette couche est donc deja plus qu un simple squelette : elle forme un socle persistant utilisable par les autres modules du prototype.
+
 ### 6.3 Cryptographie et validation
+
+La pile cryptographique actuelle combine ed25519 pour les signatures, sha2 pour le hash et arkworks pour la partie zk. Le prototype sait generer des paires de cles, signer des transactions, verifier les signatures, calculer des hashes deterministes et valider l integrite de blocs et transactions.
+
+La validation actuelle couvre aussi plusieurs garde-fous importants : anti-replay via nonce, verification des soldes, limites de taille, verification de merkle root et verification de signatures de validateurs. Cette couche fournit donc deja une base de securite fonctionnelle pour le prototype, meme si la securite globale continue d etre renforcee par les audits et les tests de non-regression.
+
 ### 6.4 Consensus Proof of Stake
+
+Le consensus actuel est un Proof of Stake maison avec votes pondérés, finalisation au-dela des deux tiers du stake actif, selection deterministe du proposant, gestion de forks par poids cumule et logique de slashing en cas de double-vote prouve.
+
+Cette couche consensus est deja prototypee, testee et benchmarkee localement. Elle permet de valider la logique de proposition, de vote, de finalisation, de recompenses et de sanctions. En revanche, elle doit encore etre consideree comme un mecanisme de prototype avance, pas comme un consensus deja eprouve sur un reseau public a grande echelle.
+
 ### 6.5 Mempool partitionnée et parallélisme
+
+Prims introduit deja une mempool partitionnee, avec distribution logique des transactions et traitement parallele prepare en fonction du nombre de coeurs disponibles. Le prototype applique aussi des frais fixes et evite la priorisation par frais dans la mempool, ce qui s inscrit dans l objectif de reduction des asymetries d execution.
+
+Cette couche est l un des premiers marqueurs architecturaux forts du projet, car elle relie directement la vision de debit eleve a des choix techniques deja implementes. Les benchmarks locaux ont valide une capacite de traitement elevee sur machine unique, mais ces resultats doivent encore etre distingues d un comportement confirme sur reseau public reel.
+
 ### 6.6 Sharding
+
+L architecture actuelle inclut deja une couche de sharding prototypee avec configuration de shards, beacon chain, comites de validateurs, consensus par shard, racines d etat de shards et transactions cross-shard avec logique de preparation, validation, commit et receipts.
+
+Cela signifie que le sharding n est pas traite seulement comme une idee de roadmap lointaine : plusieurs briques essentielles existent deja dans le code. En revanche, la validation actuelle reste une validation de prototype, avec simulations locales et benchmarks limites, et non un deploiement sharde en production.
+
 ### 6.7 Confidentialité optionnelle
+
+La confidentialite actuelle repose sur une couche optionnelle distincte combinant notes, arbre de Merkle, preuves zk-SNARKs, transactions anonymes et conversion entre modele public et modele anonyme. Le prototype inclut deja un trusted setup simplifie documente, des benchmarks de preuve et de verification, ainsi que des tests de defense contre certains cas de double depense ou de preuve invalide.
+
+Cette couche est techniquement ambitieuse et deja bien avancee pour un prototype. Elle doit toutefois etre lue comme une base de travail serieuse et testee, pas encore comme un systeme de confidentialite declare pret pour des usages sensibles en production.
+
 ### 6.8 API RPC, explorateur et CLI
+
+L architecture actuelle expose une interface JSON-RPC via jsonrpsee, un explorateur web via axum et un CLI en clap. Le prototype sait deja fournir des informations de base, soumettre certaines transactions, afficher des donnees reseau, exposer un site testnet simple et gerer un stockage chiffre de cles cote CLI.
+
+Cette couche outillage est importante car elle rend le prototype manipulable et observable. Elle ne se limite pas a des bibliotheques internes : elle fournit deja une surface d interaction concrete pour les tests, la documentation et les futures etapes de preparation testnet/mainnet.
+
 ### 6.9 Machine virtuelle Wasm et smart contracts
+
+La couche smart contracts repose actuellement sur Wasmtime et une machine virtuelle Wasm capable de charger un contrat, d executer un appel, d exposer des host functions, de gerer une limite de fuel, de persister le storage contrat et d appliquer un rollback en cas d erreur ou d epuisement de gaz.
+
+Le prototype supporte deja le deploiement et l appel de contrats, avec validations associees, benchmarks simples et tests de securite sur des comportements malveillants elementaires. Cette couche est donc deja reelle dans l architecture, meme si elle reste encore dans un cadre de prototype avance.
+
 ### 6.10 Testnet, automatisation et sécurité
+
+Autour du noyau technique, Prims dispose deja d une couche d automatisation et de securite composee d une CI multi-OS GitHub Actions, d un mini portail testnet, d un seed node public, d un programme de bug bounty documente, de tests de charge auto-heberges, de simulations de pannes via Toxiproxy et d un audit interne consolide.
+
+Cette derniere couche est importante car elle montre que l architecture actuelle ne se limite pas au code coeur. Elle inclut aussi les outils de validation, de reproduction, de documentation et de durcissement necessaires pour approcher une vraie preparation testnet/mainnet.
 
 ---
 
