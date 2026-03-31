@@ -285,11 +285,56 @@ La confidentialite optionnelle demande egalement une vigilance particuliere. Le 
 ## 9. Tokenomics
 
 ### 9.1 Rôle du token PRIMS
+
+Dans la vision du projet, le token PRIMS a vocation a jouer plusieurs roles : actif natif du reseau, unite economique pour les transferts, support du staking, base des incitations validateurs et, a terme, element de gouvernance dans une logique de transition progressive vers une DAO.
+
+Dans l etat actuel du prototype, une partie de cette logique economique existe deja au niveau technique, notamment via les transactions de transfert, de stake et d unstake, ainsi que par la presence de frais fixes et d un mecanisme de recompenses pour les validateurs votants. En revanche, le cadre economique complet du lancement mainnet n est pas encore fige.
+
 ### 9.2 Offre totale
+
+La presentation du projet fixe une offre totale cible de 1 milliard PRIMS. Cette valeur appartient aujourd hui au cadrage de vision et de tokenomics proposee.
+
+Au 31 mars 2026, cette offre totale ne doit pas etre interpretee comme un parametre genesis deja verrouille dans un lancement mainnet effectif. La roadmap indique encore que les parametres du bloc genesis restent a definir en phase 11. L offre totale doit donc etre lue comme une cible de conception a formaliser definitivement avant le lancement.
+
 ### 9.3 Répartition proposée
+
+La presentation du projet propose la repartition suivante :
+- 60% staking ;
+- 20% tresorerie DAO ;
+- 10% premiers contributeurs ;
+- 10% fondateur, avec exigence de transparence.
+
+A ce stade, cette repartition releve du cadrage whitepaper/presentation, pas d une distribution deja executee sur un reseau lance. Elle devra etre reprise, precisee et verrouillee au moment de la definition du genesis et du cadre de lancement mainnet.
+
 ### 9.4 Usage du token dans le réseau
+
+Sur le plan fonctionnel, plusieurs usages du token sont deja visibles ou prepares dans le prototype :
+- transfert de valeur entre comptes ;
+- staking et unstaking ;
+- paiement de frais de transaction ;
+- base de calcul de certaines recompenses validateurs.
+
+En revanche, d autres usages relevent encore d etapes ulterieures, notamment la gouvernance on-chain complete, la formalisation definitive du lancement mainnet et la mise en place operationnelle des mecanismes associes au genesis. Il faut donc distinguer usage technique deja prototype et economie reseau completement finalisee.
+
 ### 9.5 Récompenses et incitations
+
+Le prototype implemente deja une logique de recompenses pour les validateurs ayant effectivement vote. Cette logique combine les frais de transaction et une inflation annuelle parametree a 2% via `ANNUAL_INFLATION_BPS = 200`. Le projet a aussi valide des frais fixes via `FIXED_TRANSACTION_FEE`, sans priorite par frais.
+
+Cela signifie que Prims dispose deja d une base economique minimale executable dans le prototype. En revanche, cela ne suffit pas encore a decrire une tokenomics mainnet complete, car il reste a formaliser la distribution initiale, les parametres de genesis, les conditions de lancement et les mecanismes de gouvernance associes.
+
 ### 9.6 Ce qui est déjà décidé vs ce qui reste à formaliser
+
+Ce qui est deja fixe au niveau de la vision ou du prototype :
+- une cible d offre totale a 1 milliard PRIMS dans la presentation ;
+- une repartition proposee entre staking, tresorerie DAO, premiers contributeurs et fondateur ;
+- l existence technique de transferts, stake, unstake, frais fixes et recompenses avec inflation annuelle de 2% dans le prototype.
+
+Ce qui reste encore a formaliser avant le mainnet :
+- les parametres exacts du bloc genesis ;
+- la traduction definitive de la repartition proposee en allocations executable ;
+- les regles finales de lancement et de distribution initiale ;
+- l articulation precise entre tokenomics et gouvernance on-chain ;
+- les decisions finales qui relevent encore des etapes 10.9, 10.10 et de la phase 11.
 
 ---
 
