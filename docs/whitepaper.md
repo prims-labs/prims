@@ -369,9 +369,28 @@ Cette prudence est coherente avec le reste du projet : d abord consolider le pro
 ## 11. Roadmap à partir de l état actuel
 
 ### 11.1 Étape 10.8 : whitepaper
+
+Au moment de rediger ce document, l etape 10.8 est celle qui est effectivement en cours dans le journal local. Son objectif est de formaliser proprement la vision, l architecture technique, l etat reel du prototype, la tokenomics proposee, la gouvernance visee et les limites actuelles du projet.
+
+Cette etape est importante car elle sert de point de clarification entre ce qui est deja valide dans le code et ce qui reste encore a accomplir avant le mainnet. Le whitepaper ne remplace pas les validations techniques, mais il structure la lecture du projet et prepare les etapes suivantes.
+
 ### 11.2 Étape 10.9 : documentation et tutoriels
+
+Apres le whitepaper, la roadmap prevoit une phase de documentation plus directement exploitable par les developpeurs et les utilisateurs. Cela inclut la documentation du code, ainsi que des tutoriels sous forme texte ou video.
+
+Cette etape a pour role de transformer un prototype techniquement riche en un systeme plus accessible, plus transmissible et plus facile a reproduire. Elle constitue une condition importante pour sortir d une logique purement interne de validation et approcher un usage testnet plus large.
+
 ### 11.3 Étape 10.10 : derniers audits et tests de pénétration
+
+Une fois le whitepaper et la documentation consolides, la roadmap prevoit une derniere sequence de securite avant la phase mainnet. Cette sequence doit completer le travail deja effectue en 10.7 par des audits supplementaires et des tests de penetration.
+
+L objectif n est pas seulement de verifier une fois de plus le code, mais de reduire au maximum l ecart entre un prototype durci et un systeme suffisamment prepare pour une exposition plus large. Cette etape reste donc critique avant toute bascule vers la phase 11.
+
 ### 11.4 Phase 11 : préparation du mainnet
+
+La phase 11 marque le passage d un prototype consolide vers un reseau vivant. D apres la roadmap, elle comprend notamment le gel du code sur une branche mainnet, la definition des parametres du bloc genesis, le lancement initial avec un petit groupe de validateurs de confiance, l ouverture progressive au public, puis la mise en place de la gouvernance on-chain et le transfert progressif du controle vers la DAO.
+
+Cette phase ne doit pas etre lue comme deja engagee dans l etat actuel du projet. Elle represente la suite logique apres la finalisation des etapes 10.8, 10.9 et 10.10. Autrement dit, au 31 mars 2026, Prims se situe encore avant le mainnet, dans une phase de consolidation finale.
 
 ---
 
