@@ -397,9 +397,28 @@ Cette phase ne doit pas etre lue comme deja engagee dans l etat actuel du projet
 ## 12. Risques, hypothèses et stratégie de livraison
 
 ### 12.1 Risques techniques
+
+Le premier risque technique tient a l ecart entre des validations locales prometteuses et un comportement confirme sur un reseau public plus large. Le projet a deja valide de nombreuses briques, mais une partie importante des mesures et des tests a ete obtenue sur machine unique, cluster local ou simulation Docker. Le passage a des conditions plus ouvertes peut faire apparaitre d autres contraintes reseau, de synchronisation, d exploitation ou de performance.
+
+Un autre risque technique concerne la profondeur fonctionnelle de certaines couches avancees. Le sharding, la confidentialite optionnelle et l execution Wasm sont deja prototypés, mais leur comportement doit encore etre confirme sur des scenarios plus riches, plus longs et plus proches d un usage reel. Le projet ne part pas de zero, mais il reste dans une phase ou la robustesse doit encore etre etendue.
+
 ### 12.2 Risques sécurité
+
+Le principal risque securite n est pas l absence de travail de durcissement, mais le fait qu un systeme de cette ampleur peut encore contenir des angles morts malgre les tests et l audit interne deja realises. La surface RPC, la VM Wasm, les flux cross-shard, la confidentialite et la logique de consensus doivent continuer a etre verifies avec prudence.
+
+Il faut aussi garder a l esprit que certaines validations securite actuelles couvrent des familles d attaques ciblees, sans pretendre constituer un audit exhaustif de production. C est precisement pour cela que la roadmap maintient encore une etape 10.10 de derniers audits et tests de penetration avant la phase mainnet.
+
 ### 12.3 Risques de complexité
+
+Prims cherche a reunir dans un meme systeme reseau P2P, stockage, consensus Proof of Stake, parallélisme, sharding, confidentialite optionnelle, API, CLI, explorateur et smart contracts Wasm. Cette ambition donne de la coherence a long terme, mais elle augmente aussi le risque de complexite d integration, de maintenance et de verification.
+
+Cette complexite peut se traduire par des interactions difficiles entre modules, des effets de bord lors des evolutions et un besoin documentaire important pour que le projet reste comprehensible. Le risque n est donc pas seulement technique au sens bas niveau ; il touche aussi la lisibilite du systeme, sa transmissibilite et sa capacite a etre repris correctement par d autres acteurs qu un noyau tres restreint.
+
 ### 12.4 Stratégie de progression
+
+La strategie de livraison retenue par Prims consiste justement a contenir ces risques par une progression prudente, etape par etape. Le projet avance par validations locales, tests, benchmarks, documentation, commits traces, push GitHub verifies et sauvegardes locales, avant de passer a l etape suivante.
+
+Dans cette logique, la sequence correcte reste : finaliser le whitepaper 10.8, completer la documentation et les tutoriels en 10.9, mener les derniers audits et tests de penetration en 10.10, puis seulement entrer en phase 11 pour le gel du code, le genesis, le lancement progressif et la gouvernance. La strategie n est donc pas d accelerer artificiellement vers le mainnet, mais de reduire progressivement l incertitude avant chaque bascule importante.
 
 ---
 
