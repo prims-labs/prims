@@ -1,6 +1,6 @@
 # Journal d'avancement de Prims
 
-Dernière mise à jour : 30 mars 2026
+Dernière mise à jour : 1 avril 2026
 
 ## Étapes terminées
 - [x] 0.1 : Installation de Rust, Git, VS Code (vérifié)
@@ -132,10 +132,14 @@ Dernière mise à jour : 30 mars 2026
 
 - [x] 10.7 : audit de securite finalise par audit interne pousse consolide dans `docs/security_audit_findings.md` et `docs/security_internal_audit_plan.md`, avec durcissements valides sur RPC, VM Wasm, reseau, consensus, sharding et confidentialite ; correctif majeur applique cote RPC pour imposer la verification cryptographique des signatures avant acceptation, tests de non-regression ajoutes, validation globale reussie avec `cargo test -- --nocapture` (`182 passed; 0 failed` sur la lib, `9 passed; 0 failed` sur `cli_integration`, `8 passed; 0 failed` sur `rpc_api`) ; verrouillage Git/GitHub realise avec le commit `2cc7671` (`security(audit): consolidate internal hardening for step 10.7`) pousse sur `origin/main`, verification `HEAD = origin/main` confirmee ; l appel public a audit GitHub reste ouvert en parallele pour accepter d eventuels retours externes sans bloquer la progression.
 
+- [x] 10.8 : whitepaper complet finalise dans `docs/whitepaper.md` avec resume executif, avertissement sur l etat reel du projet, vision, principes de conception, etat actuel, architecture technique, fonctionnalites validees, limites, tokenomics, gouvernance, roadmap, risques, conclusion et annexes ; les fichiers de cadrage `presentation.md` et `choix_techniques.md` ont ete restaures pour soutenir la redaction ; cloture Git/GitHub realisee avec le commit final `dbb7b7f` (`docs(whitepaper): finalize complete whitepaper for step 10.8`) pousse sur `origin/main`, verification `HEAD = origin/main` confirmee, et sauvegardes finales creees dans `~/Documents/prims_sources/step-10.8/`.
+
 ## Prochaine étape
-10.8 – Finaliser la preparation testnet/mainnet suivante prevue par la roadmap a partir de l etat actuel consolide apres l audit de securite 10.7.
+10.9 – Documenter le code (rustdoc) et creer les tutoriels developpeur/utilisateur prevus par la roadmap a partir du whitepaper 10.8 finalise.
 
 ## Notes importantes
+
+- Étape 10.8 validée : `docs/whitepaper.md` est désormais complet et cohérent avec `presentation.md`, `choix_techniques.md`, `roadmap.md` et l état réel du `journal_avancement.md`, sans placeholder restant, avec clôture Git/GitHub au commit final `dbb7b7f` puis sauvegardes finales dans `~/Documents/prims_sources/step-10.8/`.
 - Cloture roadmap 10.7 decidee le 30 mars 2026 apres audit interne pousse, consolidation documentaire, validation globale et push GitHub ; l appel public a audit sur GitHub reste volontairement ouvert apres la cloture roadmap pour permettre des retours externes tardifs, qui seront traites comme maintenance/correctifs de securite sans reouvrir la progression principale.
 - Verrouillage Git/GitHub 10.7 de l audit interne poussé réalisé le 30 mars 2026 : commit `2cc7671` (`security(audit): consolidate internal hardening for step 10.7`) créé puis poussé avec succès sur `origin/main`, vérification confirmée avec `HEAD = origin/main = 2cc767151e67dda6db67eacbeea9fb0e47ffd91e` ; l appel public à audit reste volontairement ouvert après ce push pour laisser une dernière fenêtre de retours externes avant clôture éventuelle de 10.7.
 - Audit interne 10.7 fortement avance le 30 mars 2026 : revue ciblee des zones RPC, VM Wasm, reseau, consensus, sharding et confidentialite ; constats et validations centralises dans `docs/security_audit_findings.md`, avec ajout de tests de non-regression et de durcissement sur chaque sous-zone auditée.
