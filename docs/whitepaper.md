@@ -217,14 +217,40 @@ Cette derniere couche est importante car elle montre que l architecture actuelle
 ## 7. Fonctionnalités déjà implémentées et validées
 
 ### 7.1 Réseau
+
+La couche reseau deja validee couvre un noeud P2P base sur libp2p, la decouverte de pairs, l utilisation d un seed node, la diffusion de messages par gossip, des messages reseau specialises, des limites de connexion, une logique de reconnexion et de bannissement temporaire, ainsi qu un script de cluster local a 3 noeuds. La propagation d un message de test a ete benchmarkee localement, et une resistance de base au spam de connexions a aussi ete verifiee.
+
 ### 7.2 Stockage
+
+Le stockage deja implemente couvre les structures blockchain de base, le hash et le merkle root, l abstraction de stockage RocksDB, les cles metier, la persistance des blocs, transactions et comptes, la reprise apres redemarrage, un benchmark sur 10 000 blocs et un renforcement d integrite par checksum pour certaines donnees critiques. Cette couche est donc deja utilisable comme socle persistant du prototype.
+
 ### 7.3 Sécurité transactionnelle
+
+La securite transactionnelle deja validee couvre la generation et la verification de signatures ed25519, l anti-replay par nonce, la verification de solde, les controles de montants et d overflow, les limites de taille, la validation des blocs et plusieurs tests de non-regression sur l integrite des hashes et l ordre des transactions. Cela fournit deja une base solide pour refuser les cas elementaires invalides ou malveillants dans le prototype.
+
 ### 7.4 Consensus
+
+Le consensus deja implemente couvre les validateurs, les transactions de stake et unstake, la selection deterministe du proposant, la proposition de blocs, les votes signes, la finalisation au-dela des deux tiers du stake actif, la gestion de forks, le slashing sur double-vote, la distribution de recompenses, une simulation integree et des tests de resilience byzantine. Un benchmark local a egalement valide la finalisation sous l objectif vise dans le prototype.
+
 ### 7.5 Sharding
+
+Le sharding deja valide couvre une configuration initiale de shards, une beacon chain, des comites de validateurs, un consensus propre a chaque shard, des transactions cross-shard avec receipts, la verification des preuves et de la finalite globale, la mise a jour des racines d etat, une simulation Docker multi-shards, un benchmark local multi-shards et un test de securite confirmant qu une compromission simulee d un shard n affecte pas les autres.
+
 ### 7.6 Confidentialité
+
+La couche de confidentialite deja implementee couvre un modele UTXO minimal, des notes anonymes, un arbre de Merkle, un circuit zk-SNARK, un trusted setup simplifie documente, la generation et la verification de preuves Groth16, les transactions anonymes, l etat anonyme des comptes, la conversion public/anon, un test de non-tracabilite entre notes de meme valeur, un benchmark de performance et des tests de defense contre certaines preuves invalides et certaines doubles depenses.
+
 ### 7.7 Outils développeur et utilisateur
+
+Les outils deja disponibles couvrent une API JSON-RPC, un explorateur web minimal, un CLI utilisateur, la documentation RPC, des tests d integration RPC + CLI, un stockage chiffre de cles cote CLI, une CI multi-OS GitHub Actions et un mini portail testnet. Le projet dispose donc deja d une surface d usage concrete pour developper, tester et observer le prototype.
+
 ### 7.8 Exécution de smart contracts
+
+La couche smart contracts deja validee couvre le runtime Wasm, les host functions de base, le stockage persistant des contrats, le fuel et la limite de gaz, les transactions natives de deploiement et d appel, l execution reelle d un contrat, le rollback atomique du storage en cas d erreur, un test fonctionnel de contrat simple de type jeton/ERC20 minimal, un benchmark d execution et des tests de defense contre boucle infinie, epuisement de fuel et acces memoire hors limites.
+
 ### 7.9 Audit et durcissement sécurité
+
+Au-dela des validations par module, Prims a deja passe une phase explicite de durcissement securite. L API publique a ete revue pour ne plus exposer certains champs sensibles, la VM Wasm a ete renforcee, l audit interne de l etape 10.7 a consolide les points reseau, consensus, sharding, confidentialite, RPC et execution Wasm, et un correctif majeur a impose la verification cryptographique des signatures cote RPC avant acceptation. Cette phase s est accompagnee de tests de non-regression et d un verrouillage Git/GitHub proprement trace.
 
 ---
 
