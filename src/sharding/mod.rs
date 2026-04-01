@@ -1,3 +1,9 @@
+//! Gestion du sharding et des échanges inter-shards.
+//!
+//! Ce module définit la configuration des shards, la beacon chain,
+//! les comités de validateurs, l'état des shards et le protocole
+//! simplifié de transactions cross-shard.
+
 use crate::{
     blockchain::types::{
         Block, CrossShardPhase, CrossShardReceipt, RECEIPT_PROOF_LENGTH, Transaction, Validator,

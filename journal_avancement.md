@@ -134,10 +134,14 @@ Dernière mise à jour : 1 avril 2026
 
 - [x] 10.8 : whitepaper complet finalise dans `docs/whitepaper.md` avec resume executif, avertissement sur l etat reel du projet, vision, principes de conception, etat actuel, architecture technique, fonctionnalites validees, limites, tokenomics, gouvernance, roadmap, risques, conclusion et annexes ; les fichiers de cadrage `presentation.md` et `choix_techniques.md` ont ete restaures pour soutenir la redaction ; cloture Git/GitHub realisee avec le commit final `dbb7b7f` (`docs(whitepaper): finalize complete whitepaper for step 10.8`) pousse sur `origin/main`, verification `HEAD = origin/main` confirmee, et sauvegardes finales creees dans `~/Documents/prims_sources/step-10.8/`.
 
+- [x] 10.9 : documentation 10.9 realisee avec ajout d un rustdoc de tete sur les modules publics `src/lib.rs`, `src/network/mod.rs`, `src/blockchain/mod.rs`, `src/storage/mod.rs`, `src/crypto/mod.rs`, `src/consensus/mod.rs`, `src/sharding/mod.rs` et `src/api/mod.rs`, generation locale du rustdoc via `cargo doc --no-deps`, creation des tutoriels `docs/developer_tutorial.md` et `docs/user_tutorial.md`, et ajout des liens correspondants dans `README.md`.
+
 ## Prochaine étape
-10.9 – Documenter le code (rustdoc) et creer les tutoriels developpeur/utilisateur prevus par la roadmap a partir du whitepaper 10.8 finalise.
+10.10 – Mener une derniere serie d audits et de tests de penetration.
 
 ## Notes importantes
+
+- Étape 10.9 préparée le 1 avril 2026 : rustdoc de tête ajouté sur les modules publics, rustdoc HTML généré localement dans `target/doc/prims/index.html`, tutoriels `docs/developer_tutorial.md` et `docs/user_tutorial.md` créés, et section `Documentation` du `README.md` enrichie ; clôture Git/GitHub finale encore à confirmer par commit/push de l étape 10.9.
 
 - Étape 10.8 validée : `docs/whitepaper.md` est désormais complet et cohérent avec `presentation.md`, `choix_techniques.md`, `roadmap.md` et l état réel du `journal_avancement.md`, sans placeholder restant, avec clôture Git/GitHub au commit final `dbb7b7f` puis sauvegardes finales dans `~/Documents/prims_sources/step-10.8/`.
 - Cloture roadmap 10.7 decidee le 30 mars 2026 apres audit interne pousse, consolidation documentaire, validation globale et push GitHub ; l appel public a audit sur GitHub reste volontairement ouvert apres la cloture roadmap pour permettre des retours externes tardifs, qui seront traites comme maintenance/correctifs de securite sans reouvrir la progression principale.

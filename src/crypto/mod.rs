@@ -1,3 +1,9 @@
+//! Outils cryptographiques de base.
+//!
+//! Ce module gère actuellement la génération de paires de clés Ed25519,
+//! la signature des transactions et la vérification cryptographique
+//! des signatures.
+
 use crate::blockchain::types::Transaction;
 use anyhow::{Result, anyhow};
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};

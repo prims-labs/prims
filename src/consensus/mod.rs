@@ -1,3 +1,9 @@
+//! Logique de consensus et mempool.
+//!
+//! Ce module regroupe la mempool partitionnée, la sélection du proposant,
+//! les votes signés, la finalisation, la gestion des forks,
+//! le slashing et la distribution des récompenses.
+
 use crate::blockchain::{
     hash::{calculate_merkle_root, sha256},
     types::{Block, BlockHeader, Transaction, Validator},

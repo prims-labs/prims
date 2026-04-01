@@ -72,6 +72,8 @@ cargo run --bin prims
 ## Documentation
 
 - API JSON-RPC : `docs/api_rpc.md`
+- Tutoriel developpeur : `docs/developer_tutorial.md`
+- Tutoriel utilisateur : `docs/user_tutorial.md`
 - Setup de confidentialite : `docs/privacy_trusted_setup.md`
 - Bug bounty testnet : `docs/bug_bounty.md`
 - Audit de securite : `docs/security_audit.md`

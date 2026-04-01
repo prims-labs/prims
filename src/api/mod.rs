@@ -1,3 +1,9 @@
+//! API JSON-RPC de Prims.
+//!
+//! Ce module expose les méthodes RPC publiques, applique les validations
+//! d'entrée, le rate limiting, l'accès au stockage local et le lien
+//! avec la mempool et l'exécution Wasm.
+
 use crate::{
     blockchain::{
         hash::{hash_block_header, hash_transaction},

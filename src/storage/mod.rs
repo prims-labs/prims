@@ -1,3 +1,9 @@
+//! Couche de persistance de Prims.
+//!
+//! Ce module fournit l'abstraction de stockage, l'implémentation RocksDB
+//! et les opérations métier pour les blocs, transactions, comptes,
+//! validateurs, contrats et données de confidentialité.
+
 pub mod keys;
 
 use crate::blockchain::hash::{
