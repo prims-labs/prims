@@ -136,10 +136,15 @@ Dernière mise à jour : 1 avril 2026
 
 - [x] 10.9 : documentation 10.9 finalisee avec ajout d un rustdoc de tete sur les modules publics `src/lib.rs`, `src/network/mod.rs`, `src/blockchain/mod.rs`, `src/storage/mod.rs`, `src/crypto/mod.rs`, `src/consensus/mod.rs`, `src/sharding/mod.rs` et `src/api/mod.rs`, validation locale reussie avec `cargo fmt --all --check`, `cargo check` et `cargo doc --no-deps`, creation des tutoriels `docs/developer_tutorial.md` et `docs/user_tutorial.md`, ajout des liens correspondants dans `README.md`, cloture Git/GitHub realisee avec le commit `1c20369` (`docs(rustdoc): document public modules and add step 10.9 tutorials`) pousse sur `origin/main`, verification `HEAD = origin/main` confirmee, et sauvegardes finales creees dans `~/Documents/prims_sources/step-10.9/`.
 
+- [x] 10.10 : campagne finale d audits et de tests de penetration executee sur RPC, VM Wasm, reseau, consensus, sharding, confidentialite, script DoS et explorateur testnet avec faucet web desactive sans cle locale ; validations reussies avec cargo test --test rpc_api -- --nocapture (8 passed), cargo test execute_contract_call -- --nocapture (5 passed), cargo test decode_hex_32 -- --nocapture (3 passed), cargo test verify_vote -- --nocapture (4 passed), cargo test prepare_rejects_invalid_ -- --nocapture (2 passed), cargo test anon_to_public -- --nocapture (4 passed), bash scripts/test_connection_spam.sh (60 connexions TCP reussies, 0 crash) et test isole du faucet sur 7201/7202/7203 confirmant un refus propre sans PRIMS_SECRET_KEY_FILE ni PRIMS_SECRET_KEY_HEX ; rapport final ajoute dans docs/security_pentest_10_10.md
+
 ## Prochaine étape
-10.10 – Mener une derniere serie d audits et de tests de penetration.
+11.1 – Geler le code sur une branche mainnet.
 
 ## Notes importantes
+
+- Etape 10.10 validee le 1 avril 2026 : campagne finale d audits et de tests de penetration executee sur RPC, VM Wasm, reseau, consensus, sharding, confidentialite, resistance simple au spam TCP et explorateur testnet ; rapport final ajoute dans docs/security_pentest_10_10.md ; prochaine etape fixee a 11.1 - Geler le code sur une branche mainnet.
+
 
 - Étape 10.9 validée le 1 avril 2026 : rustdoc de tête ajouté sur les modules publics `src/lib.rs`, `src/network/mod.rs`, `src/blockchain/mod.rs`, `src/storage/mod.rs`, `src/crypto/mod.rs`, `src/consensus/mod.rs`, `src/sharding/mod.rs` et `src/api/mod.rs`, rustdoc HTML généré localement dans `target/doc/prims/index.html`, tutoriels `docs/developer_tutorial.md` et `docs/user_tutorial.md` créés, section `Documentation` du `README.md` enrichie, clôture Git/GitHub réalisée avec le commit `1c20369` (`docs(rustdoc): document public modules and add step 10.9 tutorials`) poussé sur `origin/main`, vérification `HEAD = origin/main` confirmée, et sauvegardes finales créées dans `~/Documents/prims_sources/step-10.9/`.
 

@@ -12,6 +12,8 @@ Centraliser les retours recus pendant l etape 10.7, suivre leur qualification, l
 - Bug bounty testnet : `docs/bug_bounty.md`
 
 ## Statut actuel
+- 1 avril 2026 : campagne finale 10.10 executee sur RPC, VM Wasm, reseau, consensus, sharding, confidentialite, resistance simple au spam de connexions TCP et explorateur testnet avec faucet desactive sans cle locale. Aucun nouveau probleme critique confirme sur les surfaces testees. Rapport consolide ajoute dans docs/security_pentest_10_10.md.
+
 
 Aucune faille exploitable recue et documentee pour le moment.
 Un premier commentaire non exploitable a ete recu sur l issue publique d appel a audit et a fait l objet d une demande de details.
