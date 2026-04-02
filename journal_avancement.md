@@ -1,6 +1,6 @@
 # Journal d'avancement de Prims
 
-Dernière mise à jour : 1 avril 2026
+Dernière mise à jour : 2 avril 2026
 
 ## Étapes terminées
 - [x] 0.1 : Installation de Rust, Git, VS Code (vérifié)
@@ -138,10 +138,15 @@ Dernière mise à jour : 1 avril 2026
 
 - [x] 10.10 : campagne finale d audits et de tests de penetration executee sur RPC, VM Wasm, reseau, consensus, sharding, confidentialite, script DoS et explorateur testnet avec faucet web desactive sans cle locale ; validations reussies avec cargo test --test rpc_api -- --nocapture (8 passed), cargo test execute_contract_call -- --nocapture (5 passed), cargo test decode_hex_32 -- --nocapture (3 passed), cargo test verify_vote -- --nocapture (4 passed), cargo test prepare_rejects_invalid_ -- --nocapture (2 passed), cargo test anon_to_public -- --nocapture (4 passed), bash scripts/test_connection_spam.sh (60 connexions TCP reussies, 0 crash) et test isole du faucet sur 7201/7202/7203 confirmant un refus propre sans PRIMS_SECRET_KEY_FILE ni PRIMS_SECRET_KEY_HEX ; rapport final ajoute dans docs/security_pentest_10_10.md
 
+- [x] 11.1 : code gelé sur une branche `mainnet`, créée localement depuis `main` au commit `eb8b143dc2ba410ef871e65b2760ee22c498b81b`, puis poussée sur GitHub en `origin/mainnet` ; la branche `main` est conservée pour le suivi documentaire et la préparation de l étape 11.2.
+
 ## Prochaine étape
-11.1 – Geler le code sur une branche mainnet.
+11.2 – Définir les paramètres du bloc genesis.
 
 ## Notes importantes
+
+- Étape 11.1 validée le 2 avril 2026 : branche `mainnet` créée localement depuis `main` au commit gelé `eb8b143dc2ba410ef871e65b2760ee22c498b81b`, puis poussée sur GitHub en `origin/mainnet` ; la branche `main` reste la branche de travail pour documenter et réaliser l étape 11.2.
+
 
 - Etape 10.10 validee le 1 avril 2026 : campagne finale d audits et de tests de penetration executee sur RPC, VM Wasm, reseau, consensus, sharding, confidentialite, resistance simple au spam TCP et explorateur testnet ; rapport final ajoute dans docs/security_pentest_10_10.md ; prochaine etape fixee a 11.1 - Geler le code sur une branche mainnet.
 
