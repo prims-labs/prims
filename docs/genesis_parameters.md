@@ -21,6 +21,7 @@ Il ne modifie pas la branche `mainnet` gelee ; il prepare le lancement depuis `m
 - La branche `mainnet` reste gelee ; toute preparation documentaire se fait sur `main`.
 
 ## Adresses initiales a definir avant lancement
+- adresse_reserve_recompenses_staking : f05cc9b4dc41201ed051c41a9949e0287b04298214db828e6f32f8ec1aa5ca06
 - adresse_tresorerie_dao : d403157cba50b5eea5952aa89a6a37f78fa7424616d7a987f9acc0d72135dd78
 - adresse_fondateur : 6a205fb96318fc7027f827608a91908910b81945b0f6843acabccf0556f3efb3
 - adresses_premiers_contributeurs :
